@@ -1,0 +1,4 @@
+<resources>
+
+    <style name="Theme.Overlay" parent="Theme.AppCompat.DayNight.NoActionBar" />
+</resources>
