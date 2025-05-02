@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("com.google.devtools.ksp") version "2.0.21-1.0.27"
 }
 
 android {
@@ -14,7 +15,7 @@ android {
         applicationId = "com.turtlepaw.overlay"
         minSdk = 30
         targetSdk = 35
-        versionCode = 7
+        versionCode = 9
         versionName = "1.0"
     }
 
@@ -85,5 +86,14 @@ dependencies {
     // Icons
     implementation(libs.material.icons.extended)
 
-    implementation("com.github.Turtlepaw:nearby_settings:1.0.1-alpha1")
+    //implementation("com.github.Turtlepaw:nearby_settings:1.0.1-alpha2")
+    implementation(files("E:/nearby_settings/tv_core/build/outputs/aar/tv_core-debug.aar"))
+    implementation("com.google.android.gms:play-services-nearby:19.3.0")
+    implementation("com.google.accompanist:accompanist-permissions:0.37.2")
+
+    implementation("io.github.raamcosta.compose-destinations:core:2.1.1")
+    ksp("io.github.raamcosta.compose-destinations:ksp:2.1.1")
+
+    // for bottom sheet destination support, also add
+    implementation("io.github.raamcosta.compose-destinations:bottom-sheet:2.1.1")
 }

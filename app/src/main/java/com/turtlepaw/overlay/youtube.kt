@@ -15,7 +15,7 @@ data class Snippet(val title: String)
 val PLAYLIST_ID = ""
 val API_KEY = ""
 
-fun fetchRandomVideoId(playlistId: String = PLAYLIST_ID, apiKey: String = API_KEY): String? {
+fun fetchRandomVideoId(playlistId: String, apiKey: String): String? {
     val client = OkHttpClient()
 
     // URL to get the playlist items (videos) from YouTube, with your API key

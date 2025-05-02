@@ -18,6 +18,8 @@ import android.view.Gravity
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.FrameLayout
+import android.widget.Toast
+import androidx.activity.result.launch
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -78,6 +80,12 @@ import com.turtlepaw.overlay.overlays.OverlayTransparent
 import okhttp3.Response
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import androidx.core.net.toUri
+import com.turtlepaw.nearby_settings.tv_core.SettingsManager
+import com.turtlepaw.nearby_settings.tv_core.getTypedValue
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 data class MediaInfo(
     val title: String?,
@@ -120,6 +128,15 @@ class OverlayService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         entityId = SharedPrefs(this).getSelectedMediaPlayer()
         triggerId = SharedPrefs(this).getTriggerEntityId()
+        val play = intent?.getBooleanExtra("play", false) ?: false
+        if (play) {
+            CoroutineScope(Dispatchers.Default).launch {
+                launchYoutube()
+            }
+            Handler(Looper.getMainLooper()).post {
+                showOverlay()
+            }
+        }
 
         return START_STICKY
     }
@@ -266,13 +283,26 @@ class OverlayService : Service() {
     }
 
     private fun launchYoutube() {
-        val playlist = fetchRandomVideoId()
+        val settings = SettingsManager(this).loadSettings(defaultSchema, true)
+        if (settings == null) return
+        val playlistId = settings.getTypedValue<String>("youtube_playlist_id")
+        val apiKey = settings.getTypedValue<String>("youtube_api_key")
+        if(playlistId == null || apiKey == null) return Toast.makeText(
+            this,
+            "Youtube not configured",
+            Toast.LENGTH_SHORT
+        ).show()
+
+        val playlist = fetchRandomVideoId(
+            playlistId,
+            apiKey
+        )
 
 // Check if the video ID is valid
         if (playlist != null && playlist.isNotEmpty()) {
             Log.d("Playlist", "Video ID: $playlist")
 
-            val videoUri = Uri.parse("vnd.youtube://video/$playlist")
+            val videoUri = "vnd.youtube://video/$playlist".toUri()
             val intent = Intent(Intent.ACTION_VIEW, videoUri)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             startActivity(intent)

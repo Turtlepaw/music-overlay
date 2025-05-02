@@ -49,8 +49,8 @@ class SharedPrefs(val context: Context) {
         return baseUrl
     }
 
-    fun setSelectedMediaPlayer(entity: Entity): SharedPrefs {
-        setPref(SELECTED_MEDIA_PLAYER_KEY, entity.entityId)
+    fun setSelectedMediaPlayer(id: String): SharedPrefs {
+        setPref(SELECTED_MEDIA_PLAYER_KEY, id)
         return this
     }
 

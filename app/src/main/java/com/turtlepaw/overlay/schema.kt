@@ -9,70 +9,45 @@ import com.turtlepaw.nearby_settings.tv_core.SettingsSchema
 
 val youtubeGroup = GroupData(
     key = "youtube",
-    label = "YouTube",
-    description = "Custom input group with custom input"
+    label = "YouTube Plugin",
+    description = "[Learn how to setup the YouTube plugin](https://github.com/Turtlepaw/Overlay/wiki/YouTube-Playlist)"
 )
 
 val defaultSchema = SettingsSchema(
     schemaItems = listOf(
         SettingSchema(
-            key = "text_input",
-            label = "Text Input",
-            description = "**Markdown** is fully supported thanks to [flutter_markdown](https://pub.dev/packages/flutter_markdown)!",
-            type = SettingType.TEXT,
-            constraints = SettingConstraints(
-                min = 5,
-                max = 10
-            )
-        ),
-        SettingSchema(
-            key = "number_input",
-            label = "Number Input",
-            type = SettingType.NUMBER,
-            constraints = SettingConstraints(
-                min = 1,
-                max = 10
-            )
-        ),
-        SettingSchema(
-            key = "toggle_input",
-            description = "This is a toggle input",
-            label = "Toggle Input",
-            type = SettingType.TOGGLE,
-        ),
-        SettingSchema(
-            key = "select_input",
-            label = "Select Input",
+            key = "ui_mode",
+            label = "UI Mode",
             type = SettingType.SELECT,
             constraints = SettingConstraints(
-                options = listOf("option1", "option2", "option3"),
+                options = UiMode.entries.map { it.name },
             )
         ),
         SettingSchema(
-            key = "multiselect_input",
-            label = "Multiselect Input",
-            type = SettingType.MULTI_SELECT,
-            constraints = SettingConstraints(
-                options = listOf("option1", "option2", "option3"),
-                max = 2,
-                min = 1
-            )
-        ),
-        SettingSchema(
-            key = "toggle_parent",
-            label = "Custom Input",
+            key = "youtube",
+            label = "Enable YouTube Plugin",
             type = SettingType.TOGGLE,
-            group = customInputGroup
+            group = youtubeGroup
         ),
         SettingSchema(
-            key = "custom_input",
-            label = "Custom Input",
+            key = "youtube_api_key",
+            label = "API Key",
             type = SettingType.TEXT,
-            group = customInputGroup,
+            group = youtubeGroup,
             parent = SettingParent(
-                key = "toggle_parent",
+                key = "youtube",
                 requiredBoolValue = true
             )
-        )
+        ),
+        SettingSchema(
+            key = "youtube_playlist_id",
+            label = "Playlist ID",
+            type = SettingType.TEXT,
+            group = youtubeGroup,
+            parent = SettingParent(
+                key = "youtube",
+                requiredBoolValue = true
+            )
+        ),
     )
 );
