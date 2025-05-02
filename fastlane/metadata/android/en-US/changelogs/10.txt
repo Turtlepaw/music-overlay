@@ -1,0 +1,3 @@
+- Improve appearance of overlay
+- Add support for Nearby Settings
+- Internal code cleanup
