@@ -7,7 +7,6 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.graphics.PixelFormat
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -19,67 +18,26 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.Toast
-import androidx.activity.result.launch
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.MusicOff
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.motionEventSpy
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.*
 import androidx.savedstate.SavedStateRegistry
 import androidx.savedstate.SavedStateRegistryController
 import androidx.savedstate.SavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
-import androidx.tv.material3.MaterialTheme
-import androidx.tv.material3.Surface
-import androidx.tv.material3.SurfaceDefaults
-import androidx.tv.material3.Text
-import coil3.compose.AsyncImagePainter
-import coil3.compose.SubcomposeAsyncImage
-import coil3.compose.SubcomposeAsyncImageContent
-import coil3.request.ImageRequest
-import coil3.request.crossfade
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import org.json.JSONObject
-import androidx.tv.material3.Icon
-import com.skydoves.cloudy.cloudy
-import com.turtlepaw.overlay.components.TimeText
 import com.turtlepaw.overlay.overlays.OverlayDock
 import com.turtlepaw.overlay.overlays.OverlayTransparent
 import okhttp3.Response
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 import androidx.core.net.toUri
 import com.turtlepaw.nearby_settings.tv_core.SettingsManager
 import com.turtlepaw.nearby_settings.tv_core.getTypedValue
@@ -226,6 +184,7 @@ class OverlayService : Service() {
                                     event.getJSONObject("data")
                                         .getJSONObject("new_state")
                                 if (triggerId != null && newState.getString("entity_id") == triggerId) {
+                                    Log.d("WebSocket", "Received event: $newState - $event")
                                     val state = newState.getString("state") == "on"
                                     if (state) {
                                         launchYoutube()
@@ -233,9 +192,8 @@ class OverlayService : Service() {
                                             showOverlay()
                                         }
                                     } else {
-                                        Handler(Looper.getMainLooper()).post {
+                                        Log.d("WebSocket", "Removing overlay")
                                             removeOverlay()
-                                        }
                                     }
                                 } else if (entityId != null && newState.getString("entity_id") == entityId) {
                                     val attributes = newState.getJSONObject("attributes")
@@ -320,6 +278,11 @@ class OverlayService : Service() {
     }
 
     private fun showOverlay() {
+        if (overlayView != null) {
+            Log.d("OverlayService", "Overlay already exists, skipping")
+            return
+        }
+
         val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
 
         overlayView = FrameLayout(this).apply {
@@ -370,9 +333,23 @@ class OverlayService : Service() {
     }
 
     private fun removeOverlay() {
-        val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
-        overlayView?.let { windowManager.removeView(it) }
-        overlayView = null
+        Handler(Looper.getMainLooper()).post {
+            try {
+                overlayView?.let { view ->
+                    val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
+                    if (view.parent != null) {
+                        windowManager.removeView(view)
+                        Log.d("OverlayService", "Overlay removed successfully")
+                    } else {
+                        Log.d("OverlayService", "Overlay view has no parent")
+                    }
+                } ?: Log.d("OverlayService", "Overlay view is null")
+                overlayView = null
+            } catch (e: Exception) {
+                Log.e("OverlayService", "Error removing overlay", e)
+                overlayView = null
+            }
+        }
     }
 
     private fun createNotificationChannel() {

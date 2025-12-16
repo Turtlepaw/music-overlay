@@ -48,6 +48,16 @@
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".TriggerActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Accepts URIs that begin with "example://gizmos” -->
+                <data android:scheme="haoverlay"
+                    android:host="start" />
+            </intent-filter>
+        </activity>
         <service
             android:name=".OverlayService"
             android:foregroundServiceType="specialUse"/>

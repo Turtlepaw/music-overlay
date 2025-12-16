@@ -1,4 +1,4 @@
 <resources>
 
-    <style name="Theme.Overlay" parent="Theme.AppCompat.DayNight.NoActionBar" />
+    <style name="Theme.Overlay" parent="android:Theme.Material.NoActionBar" />
 </resources>

@@ -1,0 +1,61 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: "17"
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2"
+          bundler-cache: true
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+
+      - name: Decode Keystore
+        env:
+          ENCODED_KEYSTORE: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          echo $ENCODED_KEYSTORE | base64 --decode > app/release.keystore
+
+      - name: Create key.properties
+        run: |
+          echo "storeFile=release.keystore" > key.properties
+          echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" >> key.properties
+          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> key.properties
+          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> key.properties
+
+      - name: Build Release APK
+        run: ./gradlew assembleRelease
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: app/build/outputs/apk/release/app-release.apk
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+
+      - name: Setup Google Play Config
+        run: |
+          echo "${{ secrets.GOOGLE_PLAY_CONFIG }}" > google.json
+
+      - name: Run Fastlane Deploy
+        env:
+          GOOGLE_PLAY_CONFIG: ${{ secrets.GOOGLE_PLAY_CONFIG }}
+        run: bundle exec fastlane android deploy

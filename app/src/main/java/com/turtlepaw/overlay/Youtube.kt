@@ -1,19 +1,14 @@
 package com.turtlepaw.overlay
 
-import com.google.gson.Gson
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import org.json.JSONObject
-import java.util.Random
 
 // Data classes for parsing JSON (adjust based on your API response structure)
 data class PlaylistResponse(val items: List<PlaylistItem>)
 data class PlaylistItem(val id: String, val snippet: Snippet)
 data class Snippet(val title: String)
-
-val PLAYLIST_ID = ""
-val API_KEY = ""
 
 fun fetchRandomVideoId(playlistId: String, apiKey: String): String? {
     val client = OkHttpClient()

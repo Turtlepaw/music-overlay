@@ -154,7 +154,8 @@ class MainActivity : ComponentActivity() {
                     DestinationsNavHost(
                         navGraph = NavGraphs.preferredRoute,
                         navController = navController,
-                        engine = navHostEngine
+                        engine = navHostEngine,
+                        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
                     )
 
                     LaunchedEffect(Unit) {

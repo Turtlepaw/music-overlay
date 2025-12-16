@@ -21,7 +21,7 @@ android {
         applicationId = "com.turtlepaw.overlay"
         minSdk = 30
         targetSdk = 35
-        versionCode = 10
+        versionCode = 12
         versionName = "1.0"
     }
 
@@ -60,6 +60,10 @@ android {
             excludes += "/META-INF/*"
         }
     }
+    lint {
+        disable += "NullSafeMutableLiveData"
+    }
+
 }
 
 dependencies {
@@ -111,4 +115,7 @@ dependencies {
 
     // for bottom sheet destination support, also add
     implementation("io.github.raamcosta.compose-destinations:bottom-sheet:2.1.1")
+
+    // https://mvnrepository.com/artifact/androidx.compose.material3/material3
+    implementation("androidx.compose.material3:material3-android:1.5.0-alpha08")
 }
