@@ -39,8 +39,10 @@ import com.turtlepaw.overlay.overlays.OverlayDock
 import com.turtlepaw.overlay.overlays.OverlayTransparent
 import okhttp3.Response
 import androidx.core.net.toUri
+import androidx.tv.material3.MaterialTheme
 import com.turtlepaw.nearby_settings.tv_core.SettingsManager
 import com.turtlepaw.nearby_settings.tv_core.getTypedValue
+import com.turtlepaw.overlay.ui.theme.OverlayTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -314,9 +316,9 @@ class OverlayService : Service() {
                 setViewTreeSavedStateRegistryOwner(serviceLifecycleOwner)
 
                 setContent {
-                    OverlayComposable(
-                        overlayMessage.value, this@OverlayService
-                    )
+                        OverlayComposable(
+                            overlayMessage.value, this@OverlayService
+                        )
                 }
             }
 

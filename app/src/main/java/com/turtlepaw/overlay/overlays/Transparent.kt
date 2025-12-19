@@ -30,6 +30,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.tv.material3.Icon
@@ -42,6 +43,7 @@ import coil3.compose.SubcomposeAsyncImage
 import coil3.compose.SubcomposeAsyncImageContent
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import com.turtlepaw.overlay.GoogleSans
 import com.turtlepaw.overlay.MediaInfo
 import com.turtlepaw.overlay.components.TimeText
 
@@ -83,14 +85,14 @@ fun OverlayTransparent(data: MediaInfo?) {
                     .padding(16.dp)
                     .fillMaxWidth()
             ) {
-                Log.d("AlbumArtUri", "AlbumArtUri: ${data?.albumArtUri}")
 
                 TimeText(
                     textAlign = TextAlign.Start,
                     color = Color.White,
                     style = MaterialTheme.typography.displaySmall.copy(
                         fontSize = 60.sp,
-                        fontWeight = FontWeight.W400
+                        fontWeight = FontWeight.W400,
+                        fontFamily = GoogleSans
                     )
                 )
 
@@ -107,7 +109,8 @@ fun OverlayTransparent(data: MediaInfo?) {
                             color = Color.White,
                             style = MaterialTheme.typography.titleLarge.copy(
                                 fontWeight = FontWeight.W400,
-                                fontSize = 25.sp
+                                fontSize = 25.sp,
+                                fontFamily = GoogleSans
                             )
                         )
                     } else {
@@ -124,7 +127,8 @@ fun OverlayTransparent(data: MediaInfo?) {
                                     shadow = Shadow(
                                         color = Color.Black.copy(alpha = 0.5f),
                                         blurRadius = 4f
-                                    )
+                                    ),
+                                    fontFamily = GoogleSans
                                 ),
                             )
                             if(data?.artist != null) {
@@ -137,7 +141,8 @@ fun OverlayTransparent(data: MediaInfo?) {
                                         shadow = Shadow(
                                             color = Color.Black.copy(alpha = 0.5f),
                                             blurRadius = 4f
-                                        )
+                                        ),
+                                        fontFamily = GoogleSans
                                     ),
                                 )
                             }
@@ -180,4 +185,16 @@ fun OverlayTransparent(data: MediaInfo?) {
             }
         }
     }
+}
+
+@Composable
+@Preview
+fun OverlayTransparentPreview(){
+    OverlayTransparent(
+        data = MediaInfo(
+            title = "Hello",
+            artist = "World",
+            albumArtUri = "https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg"
+        )
+    )
 }
